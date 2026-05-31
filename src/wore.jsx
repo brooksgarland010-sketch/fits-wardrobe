@@ -21,6 +21,18 @@ const CATS = {
   other: { label: "Other", bg: "#f0f0ec", color: "#444" },
 };
 
+function WoreLogo() {
+  return (
+    <svg width="44" height="44" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <rect width="512" height="512" rx="114" fill="#0d0d0d" stroke="#c8f55a" strokeWidth="12"/>
+      <text x="256" y="330" fontFamily="'Syne', 'Arial Black', sans-serif" fontSize="300" fontWeight="800" fill="#c8f55a" textAnchor="middle">W</text>
+      <line x1="80" y1="395" x2="170" y2="395" stroke="#333" strokeWidth="8"/>
+      <line x1="342" y1="395" x2="432" y2="395" stroke="#333" strokeWidth="8"/>
+      <text x="256" y="425" fontFamily="'Syne', 'Arial Black', sans-serif" fontSize="68" fontWeight="800" fill="#555" textAnchor="middle" letterSpacing="14">WORE</text>
+    </svg>
+  );
+}
+
 function Badge({ category }) {
   const c = CATS[category] || CATS.other;
   return (
@@ -150,12 +162,15 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: "#f5f4f0", fontFamily: "'Inter', sans-serif" }}>
 
-      <header style={{ background: "#0d0d0d", padding: "0 1.25rem", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
-        <div>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: "-0.5px", lineHeight: 1 }}>
-            wore<span style={{ color: "#c8f55a" }}>.</span>
+      <header style={{ background: "#0d0d0d", padding: "0 1.25rem", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <WoreLogo />
+          <div>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: "-0.5px", lineHeight: 1 }}>
+              wore<span style={{ color: "#c8f55a" }}>.</span>
+            </div>
+            <div style={{ fontSize: 9, color: "#555", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 1 }}>AI wardrobe stylist</div>
           </div>
-          <div style={{ fontSize: 9, color: "#555", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 1 }}>AI wardrobe stylist</div>
         </div>
         <nav style={{ display: "flex", gap: 5 }}>
           {[
@@ -199,7 +214,7 @@ export default function App() {
         {view === "wardrobe" && (
           wardrobe.length === 0 ? (
             <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
-              <div style={{ width: 80, height: 80, background: "#0d0d0d", borderRadius: 24, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, margin: "0 auto 20px" }}>👗</div>
+              <div style={{ margin: "0 auto 20px" }}><WoreLogo /></div>
               <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, color: "#0d0d0d", marginBottom: 8 }}>Your closet is empty</div>
               <div style={{ color: "#999", fontSize: 14, marginBottom: "2rem" }}>Add your first clothing item to get started</div>
               <button onClick={() => setView("add")} style={fab}>+ Add first item</button>
@@ -310,7 +325,7 @@ export default function App() {
 
             {generating && (
               <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
-                <div style={{ width: 64, height: 64, background: "#0d0d0d", borderRadius: 20, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, margin: "0 auto 20px" }}>✨</div>
+                <div style={{ margin: "0 auto 20px", display: "inline-block" }}><WoreLogo /></div>
                 <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, color: "#0d0d0d", marginBottom: 8 }}>Styling your fits...</div>
                 <div style={{ color: "#999", fontSize: 13 }}>Claude is analyzing your wardrobe</div>
                 <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 20 }}>
