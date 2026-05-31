@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wore. — AI Wardrobe Stylist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0d0d0d;
+      --lime: #c8f55a;
+      --white: #ffffff;
+      --gray: #f5f4f0;
+      --muted: #888;
+      --border: #e8e6e0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--black); overflow-x: hidden; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(13,13,13,0.95); backdrop-filter: blur(10px); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1a1a1a; }
+    .nav-logo { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    .nav-logo span { color: var(--lime); }
+    .nav-cta { background: var(--lime); color: var(--black); border: none; border-radius: 20px; padding: 8px 20px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; text-decoration: none; }
+
+    /* HERO */
+    .hero { background: var(--black); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 6rem 2rem 4rem; position: relative; overflow: hidden; }
+    .hero-badge { background: #1a1a1a; border: 1px solid #333; color: var(--lime); font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 2rem; display: inline-block; }
+    .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(48px, 8vw, 96px); font-weight: 800; color: #fff; line-height: 0.95; letter-spacing: -2px; margin-bottom: 1.5rem; }
+    .hero h1 span { color: var(--lime); }
+    .hero p { font-size: clamp(16px, 2vw, 20px); color: #888; max-width: 500px; line-height: 1.6; margin-bottom: 2.5rem; font-weight: 300; }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+    .btn-primary { background: var(--lime); color: var(--black); border: none; border-radius: 12px; padding: 16px 32px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: 'Syne', sans-serif; text-decoration: none; letter-spacing: 0.02em; transition: opacity 0.15s; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background: transparent; color: #fff; border: 1px solid #333; border-radius: 12px; padding: 16px 32px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; text-decoration: none; transition: border-color 0.15s; }
+    .btn-secondary:hover { border-color: #666; }
+    .hero-note { color: #444; font-size: 12px; }
+
+    /* PHONE MOCKUP */
+    .phone-wrap { position: relative; margin: 0 auto; }
+    .phone { background: #111; border: 2px solid #222; border-radius: 40px; padding: 12px; width: 260px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
+    .phone-screen { background: #f5f4f0; border-radius: 30px; overflow: hidden; }
+    .phone-header { background: #0d0d0d; padding: 12px 16px 10px; }
+    .phone-logo { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: #fff; }
+    .phone-logo span { color: var(--lime); }
+    .phone-nav { display: flex; gap: 4px; margin-top: 10px; }
+    .phone-nav-btn { flex: 1; padding: 6px 0; border-radius: 16px; border: none; font-size: 10px; font-weight: 700; font-family: 'Inter', sans-serif; }
+    .phone-nav-active { background: var(--lime); color: #0d0d0d; }
+    .phone-nav-inactive { background: #1a1a1a; color: #555; }
+    .phone-body { padding: 12px; }
+    .phone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .phone-card { background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #ece9e2; }
+    .phone-card-img { height: 70px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+    .phone-card-body { padding: 6px 8px 8px; }
+    .phone-card-name { font-size: 9px; font-weight: 600; color: #0d0d0d; margin-bottom: 3px; }
+    .phone-card-badge { font-size: 8px; font-weight: 700; background: #e8f4e8; color: #1a5c1a; border-radius: 3px; padding: 1px 4px; text-transform: uppercase; }
+    .phone-outfit { background: #fff; border-radius: 10px; border: 1.5px solid var(--lime); overflow: hidden; }
+    .phone-outfit-header { background: #0d0d0d; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; }
+    .phone-outfit-name { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800; color: #fff; }
+    .phone-outfit-score { background: var(--lime); color: #0d0d0d; font-size: 9px; font-weight: 800; border-radius: 10px; padding: 2px 7px; }
+    .phone-outfit-body { padding: 8px 10px; display: flex; gap: 6px; }
+    .phone-outfit-item { width: 40px; height: 40px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #f5f4f0; border: 1px solid #ece9e2; }
+
+    /* SOCIAL PROOF */
+    .proof { background: var(--black); padding: 16px 2rem; display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; border-top: 1px solid #1a1a1a; }
+    .proof-item { color: #555; font-size: 12px; font-weight: 500; letter-spacing: 0.05em; }
+    .proof-item strong { color: var(--lime); }
+
+    /* FEATURES */
+    .features { background: var(--gray); padding: 6rem 2rem; }
+    .section-label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; text-align: center; margin-bottom: 1rem; }
+    .section-title { font-family: 'Syne', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 800; text-align: center; letter-spacing: -1px; margin-bottom: 1rem; line-height: 1.05; }
+    .section-sub { color: var(--muted); text-align: center; font-size: 16px; max-width: 480px; margin: 0 auto 4rem; line-height: 1.6; font-weight: 300; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 1000px; margin: 0 auto; }
+    .feature-card { background: var(--white); border-radius: 20px; padding: 2rem; border: 1px solid var(--border); }
+    .feature-icon { width: 48px; height: 48px; background: var(--black); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 1.25rem; }
+    .feature-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .feature-desc { color: var(--muted); font-size: 14px; line-height: 1.65; font-weight: 400; }
+
+    /* HOW IT WORKS */
+    .how { background: var(--white); padding: 6rem 2rem; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto; }
+    .step { text-align: center; }
+    .step-num { width: 48px; height: 48px; background: var(--lime); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--black); margin: 0 auto 1rem; }
+    .step-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+    .step-desc { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* PRICING */
+    .pricing { background: var(--gray); padding: 6rem 2rem; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 700px; margin: 0 auto; }
+    .plan { background: var(--white); border-radius: 24px; padding: 2rem; border: 1px solid var(--border); }
+    .plan-pro { background: var(--black); border-color: var(--lime); border-width: 2px; }
+    .plan-badge { background: var(--lime); color: var(--black); font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 1.25rem; }
+    .plan-name { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .plan-name-pro { color: var(--white); }
+    .plan-price { font-family: 'Syne', sans-serif; font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
+    .plan-price-pro { color: var(--lime); }
+    .plan-period { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+    .plan-period-pro { color: #555; }
+    .plan-features { list-style: none; margin-bottom: 2rem; }
+    .plan-features li { font-size: 14px; padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; color: #444; }
+    .plan-features-pro li { border-bottom-color: #1a1a1a; color: #aaa; }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features li::before { content: "✓"; color: var(--lime); font-weight: 800; font-size: 13px; flex-shrink: 0; }
+    .plan-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; letter-spacing: 0.02em; text-decoration: none; display: block; text-align: center; }
+    .plan-btn-free { background: var(--gray); color: var(--black); }
+    .plan-btn-pro { background: var(--lime); color: var(--black); }
+
+    /* CTA */
+    .cta { background: var(--black); padding: 6rem 2rem; text-align: center; }
+    .cta h2 { font-family: 'Syne', sans-serif; font-size: clamp(32px, 5vw, 56px); font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 1rem; line-height: 1.05; }
+    .cta h2 span { color: var(--lime); }
+    .cta p { color: #555; font-size: 16px; margin-bottom: 2.5rem; font-weight: 300; }
+    .email-form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto 1rem; flex-wrap: wrap; justify-content: center; }
+    .email-input { flex: 1; min-width: 220px; padding: 14px 18px; border-radius: 12px; border: 1px solid #333; background: #111; color: #fff; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; }
+    .email-input::placeholder { color: #444; }
+    .email-submit { background: var(--lime); color: var(--black); border: none; border-radius: 12px; padding: 14px 24px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: 'Syne', sans-serif; white-space: nowrap; }
+    .cta-note { color: #333; font-size: 12px; }
+
+    /* FOOTER */
+    footer { background: #080808; padding: 2rem; text-align: center; border-top: 1px solid #111; }
+    .footer-logo { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .footer-logo span { color: var(--lime); }
+    .footer-note { color: #333; font-size: 12px; }
+
+    /* DECORATIVE */
+    .hero-glow { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(200,245,90,0.06) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+
+    @media (max-width: 600px) {
+      .proof { gap: 16px; }
+      .email-form { flex-direction: column; }
+      .email-input { min-width: unset; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">wore<span>.</span></div>
+    <a href="#pricing" class="nav-cta">Get started</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-badge">✦ AI-powered styling</div>
+    <h1>Your closet.<br><span>Styled by AI.</span></h1>
+    <p>Take photos of your clothes. wore. builds outfits from what you actually own — ranked by style, every single day.</p>
+    <div class="hero-btns">
+      <a href="#pricing" class="btn-primary">Start for free →</a>
+      <a href="#how" class="btn-secondary">See how it works</a>
+    </div>
+    <p class="hero-note">No credit card required &nbsp;·&nbsp; Works on any device</p>
+
+    <div style="margin-top: 4rem;">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-header">
+            <div class="phone-logo">wore<span>.</span></div>
+            <div class="phone-nav">
+              <button class="phone-nav-btn phone-nav-active">Closet</button>
+              <button class="phone-nav-btn phone-nav-inactive">+ Add</button>
+              <button class="phone-nav-btn phone-nav-inactive">Outfits</button>
+            </div>
+          </div>
+          <div class="phone-body">
+            <div class="phone-grid">
+              <div class="phone-card">
+                <div class="phone-card-img" style="background:#f0ede8;">👕</div>
+                <div class="phone-card-body">
+                  <div class="phone-card-name">White linen shirt</div>
+                  <div class="phone-card-badge">Top</div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-card-img" style="background:#e8ede8;">🧥</div>
+                <div class="phone-card-body">
+                  <div class="phone-card-name">Tan trench coat</div>
+                  <div class="phone-card-badge" style="background:#fdf0d8;color:#7a4a00;">Outer</div>
+                </div>
+              </div>
+            </div>
+            <div class="phone-outfit">
+              <div class="phone-outfit-header">
+                <div class="phone-outfit-name">Clean lines</div>
+                <div class="phone-outfit-score">9.2 / 10</div>
+              </div>
+              <div class="phone-outfit-body">
+                <div class="phone-outfit-item">👕</div>
+                <div class="phone-outfit-item">🩳</div>
+                <div class="phone-outfit-item">👟</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF -->
+  <div class="proof">
+    <div class="proof-item">✦ AI outfit generation</div>
+    <div class="proof-item">✦ Works on <strong>any device</strong></div>
+    <div class="proof-item">✦ Front & back photo support</div>
+    <div class="proof-item">✦ Dirty item tracking</div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Everything your closet needs</h2>
+    <p class="section-sub">wore. is the only app that actually looks at your clothes and builds real outfits from what you own.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📸</div>
+        <div class="feature-title">Photo your wardrobe</div>
+        <div class="feature-desc">Snap front and back photos of every item. wore. builds a visual catalog of everything you own so nothing gets forgotten.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#c8f55a;">✨</div>
+        <div class="feature-title">AI outfit generation</div>
+        <div class="feature-desc">Claude AI analyzes your actual clothes and creates stylish outfit combinations ranked by style score — fresh picks every day.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧺</div>
+        <div class="feature-title">Dirty item tracking</div>
+        <div class="feature-desc">Mark items as dirty and wore. automatically excludes them from outfit suggestions. Only clean clothes, every time.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⭐</div>
+        <div class="feature-title">Style rankings</div>
+        <div class="feature-desc">Every outfit gets a style score out of 10 with honest feedback and tips. Know exactly which look is your best before you get dressed.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">Three steps to<br>your best outfit</h2>
+    <p class="section-sub">Getting started takes less than 5 minutes.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Photo your clothes</div>
+        <div class="step-desc">Take front and back photos of everything in your closet. Tops, bottoms, shoes, outerwear — add it all.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Mark what's clean</div>
+        <div class="step-desc">Tap once to mark dirty items. wore. only builds outfits from clothes that are ready to wear.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Get styled</div>
+        <div class="step-desc">Hit "Outfits" and Claude AI creates 4 ranked outfit combinations from your wardrobe in seconds.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple pricing</h2>
+    <p class="section-sub">Start free. Upgrade when you're ready.</p>
+    <div class="pricing-grid">
+      <div class="plan">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0</div>
+        <div class="plan-period">forever</div>
+        <ul class="plan-features">
+          <li>Up to 15 clothing items</li>
+          <li>5 outfit generations per month</li>
+          <li>Front & back photos</li>
+          <li>Dirty item tracking</li>
+          <li>Style scores & tips</li>
+        </ul>
+        <a href="/app" class="plan-btn plan-btn-free">Get started free</a>
+      </div>
+      <div class="plan plan-pro">
+        <div class="plan-badge">Most popular</div>
+        <div class="plan-name plan-name-pro">Pro</div>
+        <div class="plan-price plan-price-pro">$6.99</div>
+        <div class="plan-period plan-period-pro">per month</div>
+        <ul class="plan-features plan-features-pro">
+          <li>Unlimited clothing items</li>
+          <li>Unlimited outfit generations</li>
+          <li>Front & back photos</li>
+          <li>Dirty item tracking</li>
+          <li>Style scores & tips</li>
+        </ul>
+        <a href="/app" class="plan-btn plan-btn-pro">Start Pro free →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Stop staring at<br>your <span>closet.</span></h2>
+    <p>Join thousands getting dressed smarter every day.</p>
+    <div class="email-form">
+      <input type="email" class="email-input" placeholder="Enter your email" />
+      <button class="email-submit">Get early access</button>
+    </div>
+    <p class="cta-note">No spam. No credit card. Unsubscribe anytime.</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">wore<span>.</span></div>
+    <div class="footer-note">© 2026 wore. All rights reserved.</div>
+  </footer>
+
+</body>
+</html>
