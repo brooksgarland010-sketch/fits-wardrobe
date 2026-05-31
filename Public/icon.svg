@@ -1,0 +1,7 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="114" fill="#0d0d0d"/>
+  <circle cx="256" cy="230" r="130" fill="none" stroke="#c8f55a" stroke-width="12"/>
+  <circle cx="256" cy="230" r="86" fill="#c8f55a"/>
+  <text x="256" y="260" font-family="Arial Black, sans-serif" font-size="74" font-weight="900" fill="#0d0d0d" text-anchor="middle">W</text>
+  <text x="256" y="430" font-family="Arial Black, sans-serif" font-size="52" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="14">WORE</text>
+</svg>
