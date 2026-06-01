@@ -11,6 +11,26 @@ function saveWardrobe(items) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
+async function resizeImage(dataUrl, maxWidth = 1200) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width;
+      let h = img.height;
+      if (w > maxWidth) {
+        h = Math.round((h * maxWidth) / w);
+        w = maxWidth;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL("image/jpeg", 0.92));
+    };
+    img.src = dataUrl;
+  });
+}
+
 const CATS = {
   tops: { label: "Top", bg: "#e8f4e8", color: "#1a5c1a" },
   bottoms: { label: "Bottom", bg: "#f0e8f8", color: "#4a1a7a" },
@@ -57,16 +77,8 @@ function InstallBanner({ onDismiss }) {
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isAndroid = /android/i.test(navigator.userAgent);
   if (!isIOS && !isAndroid) return null;
-
   return (
-    <div style={{
-      background: "#0d0d0d",
-      borderBottom: "1px solid #1e1e1e",
-      padding: "12px 16px",
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
-    }}>
+    <div style={{ background: "#0d0d0d", borderBottom: "1px solid #1e1e1e", padding: "12px 16px", display: "flex", alignItems: "center", gap: 12 }}>
       <img src="/apple-touch-icon.png" alt="wore." style={{ width: 40, height: 40, borderRadius: 10, flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 800, color: "#fff" }}>Add wore. to your home screen</div>
@@ -118,9 +130,10 @@ export default function App() {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      if (activeUpload === "front") setAddForm(f => ({ ...f, frontData: ev.target.result }));
-      if (activeUpload === "back") setAddForm(f => ({ ...f, backData: ev.target.result }));
+    reader.onload = async (ev) => {
+      const resized = await resizeImage(ev.target.result, 1200);
+      if (activeUpload === "front") setAddForm(f => ({ ...f, frontData: resized }));
+      if (activeUpload === "back") setAddForm(f => ({ ...f, backData: resized }));
     };
     reader.readAsDataURL(file);
   };
@@ -151,10 +164,10 @@ export default function App() {
     setGenError("");
     setView("outfits");
 
-    const limited = clean.slice(0, 8);
+    const limited = clean.slice(0, 6);
     const imageContent = limited.map(item => ({
       type: "image",
-      source: { type: "base64", media_type: item.imageData.split(";")[0].split(":")[1], data: item.imageData.split(",")[1] }
+      source: { type: "base64", media_type: "image/jpeg", data: item.imageData.split(",")[1] }
     }));
     const itemList = limited.map((it, i) => `${i + 1}. ID=${it.id} | "${it.name}" | ${it.category}`).join("\n");
 
@@ -202,7 +215,6 @@ export default function App() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f4f0", fontFamily: "'Inter', sans-serif" }}>
-
       <header style={{ background: "#0d0d0d", padding: "0 1.25rem", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <WoreLogo />
@@ -226,7 +238,7 @@ export default function App() {
                 color: view === tab.key ? "#0d0d0d" : "#888",
                 border: "none", borderRadius: 20, padding: "7px 13px",
                 fontSize: 12, fontWeight: 700, cursor: "pointer",
-                fontFamily: "'Inter', sans-serif", letterSpacing: "0.02em",
+                fontFamily: "'Inter', sans-serif",
               }}>
               {tab.label}
             </button>
@@ -252,7 +264,6 @@ export default function App() {
       )}
 
       <main style={{ maxWidth: 900, margin: "0 auto", padding: "1.25rem" }}>
-
         {view === "wardrobe" && (
           wardrobe.length === 0 ? (
             <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
@@ -347,7 +358,7 @@ export default function App() {
                   Cancel
                 </button>
                 <button onClick={handleAdd} disabled={!addForm.name || !addForm.frontData}
-                  style={{ flex: 2, background: !addForm.name || !addForm.frontData ? "#e0e0d8" : "#0d0d0d", color: !addForm.name || !addForm.frontData ? "#aaa" : "#c8f55a", border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: !addForm.name || !addForm.frontData ? "not-allowed" : "pointer", fontFamily: "'Syne', sans-serif", letterSpacing: "0.03em" }}>
+                  style={{ flex: 2, background: !addForm.name || !addForm.frontData ? "#e0e0d8" : "#0d0d0d", color: !addForm.name || !addForm.frontData ? "#aaa" : "#c8f55a", border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 800, cursor: !addForm.name || !addForm.frontData ? "not-allowed" : "pointer", fontFamily: "'Syne', sans-serif" }}>
                   Add to Closet
                 </button>
               </div>
@@ -465,7 +476,7 @@ export default function App() {
   );
 }
 
-const fab = { background: "#0d0d0d", color: "#c8f55a", border: "none", borderRadius: 12, padding: "13px 28px", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Syne', sans-serif", letterSpacing: "0.03em" };
+const fab = { background: "#0d0d0d", color: "#c8f55a", border: "none", borderRadius: 12, padding: "13px 28px", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Syne', sans-serif" };
 const fabSmall = { background: "#0d0d0d", color: "#c8f55a", border: "none", borderRadius: 20, padding: "9px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "'Inter', sans-serif" };
 const fieldLabel = { fontSize: 11, fontWeight: 700, color: "#999", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 7 };
 const fieldInput = { width: "100%", padding: "11px 14px", border: "1.5px solid #ece9e2", borderRadius: 10, fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "inherit", background: "#fafaf8", color: "#0d0d0d" };
