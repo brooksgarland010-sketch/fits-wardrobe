@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/app","destination":"/app.html"},{"source":"/api/claude","destination":"/api/messages.js"}],"functions":{"api/messages.js":{"maxDuration":60}}}
+{"rewrites":[{"source":"/app","destination":"/app.html"}],"functions":{"api/messages.js":{"maxDuration":60}}}
