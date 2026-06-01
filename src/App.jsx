@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const STORAGE_KEY = "wore_v1";
 const EMPTY_FORM = { name: "", category: "tops", frontData: null, backData: null };
@@ -53,6 +53,32 @@ function Stars({ score }) {
   );
 }
 
+function InstallBanner({ onDismiss }) {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  if (!isIOS && !isAndroid) return null;
+
+  return (
+    <div style={{
+      background: "#0d0d0d",
+      borderBottom: "1px solid #1e1e1e",
+      padding: "12px 16px",
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+    }}>
+      <img src="/apple-touch-icon.png" alt="wore." style={{ width: 40, height: 40, borderRadius: 10, flexShrink: 0 }} />
+      <div style={{ flex: 1 }}>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 800, color: "#fff" }}>Add wore. to your home screen</div>
+        <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>
+          {isIOS ? "Tap Share → Add to Home Screen" : "Tap menu → Add to Home Screen"}
+        </div>
+      </div>
+      <button onClick={onDismiss} style={{ background: "transparent", border: "none", color: "#444", fontSize: 20, cursor: "pointer", padding: "4px 8px", flexShrink: 0 }}>✕</button>
+    </div>
+  );
+}
+
 export default function App() {
   const [wardrobe, setWardrobe] = useState(loadWardrobe);
   const [view, setView] = useState("wardrobe");
@@ -63,7 +89,22 @@ export default function App() {
   const [previewSide, setPreviewSide] = useState("front");
   const [addForm, setAddForm] = useState(EMPTY_FORM);
   const [activeUpload, setActiveUpload] = useState(null);
+  const [showInstall, setShowInstall] = useState(false);
   const fileRef = useRef();
+
+  useEffect(() => {
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+    const dismissed = localStorage.getItem("install_dismissed");
+    const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+    if (!isStandalone && !dismissed && isMobile) {
+      setTimeout(() => setShowInstall(true), 2000);
+    }
+  }, []);
+
+  const dismissInstall = () => {
+    setShowInstall(false);
+    localStorage.setItem("install_dismissed", "1");
+  };
 
   const updateWardrobe = (items) => { setWardrobe(items); saveWardrobe(items); };
 
@@ -186,13 +227,14 @@ export default function App() {
                 border: "none", borderRadius: 20, padding: "7px 13px",
                 fontSize: 12, fontWeight: 700, cursor: "pointer",
                 fontFamily: "'Inter', sans-serif", letterSpacing: "0.02em",
-                transition: "all 0.15s",
               }}>
               {tab.label}
             </button>
           ))}
         </nav>
       </header>
+
+      {showInstall && <InstallBanner onDismiss={dismissInstall} />}
 
       {view === "wardrobe" && wardrobe.length > 0 && (
         <div style={{ background: "#0d0d0d", padding: "0 1.25rem 14px", display: "flex", gap: 10 }}>
@@ -214,7 +256,7 @@ export default function App() {
         {view === "wardrobe" && (
           wardrobe.length === 0 ? (
             <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
-              <div style={{ margin: "0 auto 20px" }}><WoreLogo /></div>
+              <div style={{ margin: "0 auto 20px", display: "inline-block" }}><WoreLogo /></div>
               <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, color: "#0d0d0d", marginBottom: 8 }}>Your closet is empty</div>
               <div style={{ color: "#999", fontSize: 14, marginBottom: "2rem" }}>Add your first clothing item to get started</div>
               <button onClick={() => setView("add")} style={fab}>+ Add first item</button>
